@@ -11,6 +11,7 @@ import { machines } from '../data/machines';
 import { buildDeclarationSummary, formatDeclarationEmail } from '../utils/formatDeclaration';
 import { buildWhatsAppUrl } from '../utils/formatWhatsAppMessage';
 import { clearDraft, loadDraft, saveDraft } from '../utils/storage';
+import { persistDeclaration } from '../services/declarationService';
 import { sendDeclarationEmail } from '../services/emailService';
 import { useLanguage } from '../context/LanguageContext';
 import { getMachineIdsByCategory, groupMachinesByCategory } from '../utils/groupMachinesByCategory';
@@ -103,14 +104,16 @@ function DeclarationForm() {
     [machineIdsByCategory, selectedMachines],
   );
 
+  const getResolvedFormData = () => ({
+    ...formData,
+    localisation:
+      formData.localisation === 'AUTRE'
+        ? formData.localisationOther.trim()
+        : formData.localisation,
+  });
+
   const summary = buildDeclarationSummary({
-    formData: {
-      ...formData,
-      localisation:
-        formData.localisation === 'AUTRE'
-          ? formData.localisationOther.trim()
-          : formData.localisation,
-    },
+    formData: getResolvedFormData(),
     selectedMachines,
     machines,
   });
@@ -262,15 +265,15 @@ function DeclarationForm() {
 
     try {
       const payload = formatDeclarationEmail({
-        formData: {
-          ...formData,
-          localisation:
-            formData.localisation === 'AUTRE'
-              ? formData.localisationOther.trim()
-              : formData.localisation,
-        },
+        formData: getResolvedFormData(),
         selectedMachines,
         machines,
+      });
+
+      await persistDeclaration({
+        formData: getResolvedFormData(),
+        selectedMachineIds: selectedMachines,
+        canalEnvoi: 'email',
       });
 
       await sendDeclarationEmail(payload);
@@ -288,29 +291,34 @@ function DeclarationForm() {
     }
   };
 
-  const handleWhatsAppSend = () => {
+  const handleWhatsAppSend = async () => {
     if (!validate()) {
       showToast('error', 'form.toast.incompleteTitle', 'form.toast.incompleteMessage');
       return;
     }
 
     const url = buildWhatsAppUrl({
-      formData: {
-        ...formData,
-        localisation:
-          formData.localisation === 'AUTRE'
-            ? formData.localisationOther.trim()
-            : formData.localisation,
-      },
+      formData: getResolvedFormData(),
       selectedMachines,
       machines,
     });
+
+    try {
+      await persistDeclaration({
+        formData: getResolvedFormData(),
+        selectedMachineIds: selectedMachines,
+        canalEnvoi: 'whatsapp',
+      });
+    } catch (error) {
+      showToast('error', 'form.toast.sendErrorTitle', 'history.databaseError');
+      return;
+    }
 
     window.open(url, '_blank', 'noopener,noreferrer');
     resetForm({ keepSuccess: true });
     setSubmitSuccess({
       sentAt: new Date().toLocaleString(locale),
-      subject: `WhatsApp - ${formData.localisation} - ${formData.fullName}`,
+      subject: `WhatsApp - ${getResolvedFormData().localisation} - ${formData.fullName}`,
       channelKey: 'summary.buttons.sendWhatsApp',
     });
     showToast('success', 'form.toast.whatsappReadyTitle', 'form.toast.whatsappReadyMessage');

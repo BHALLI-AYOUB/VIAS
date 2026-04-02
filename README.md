@@ -1,6 +1,11 @@
-# VIAS - Déclaration journalière des machines
+# VIAS - Declaration et Historique des Machines
 
-Application React + Vite + Tailwind pour remplacer les appels téléphoniques quotidiens par une déclaration web simple ou détaillée.
+Application React + Vite + Tailwind pour:
+
+- declarer les machines disponibles par site
+- envoyer la declaration par EmailJS / WhatsApp
+- enregistrer les declarations dans Supabase
+- suivre l'historique complet des mouvements machine
 
 ## Installation
 
@@ -9,7 +14,16 @@ npm install
 cp .env.example .env
 ```
 
-Renseignez ensuite vos variables EmailJS dans `.env`.
+Renseignez ensuite les variables dans `.env`.
+
+## Variables d'environnement
+
+- `VITE_EMAILJS_SERVICE_ID`
+- `VITE_EMAILJS_TEMPLATE_ID`
+- `VITE_EMAILJS_PUBLIC_KEY`
+- `VITE_RECIPIENT_EMAIL`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
 ## Commandes
 
@@ -19,36 +33,68 @@ npm run build
 npm run preview
 ```
 
-## EmailJS
+## Routes
 
-Variables attendues :
+- `/` : formulaire de declaration
+- `/historique` : recherche historique et timeline
+- `/machines/:id` : detail machine
 
-- `VITE_EMAILJS_SERVICE_ID`
-- `VITE_EMAILJS_TEMPLATE_ID`
-- `VITE_EMAILJS_PUBLIC_KEY`
-- `VITE_RECIPIENT_EMAIL`
+## Mise en place Supabase
 
-Paramètres envoyés au template :
+1. Creez un projet Supabase.
+2. Ouvrez l'editeur SQL Supabase.
+3. Executez le fichier:
 
-- `to_email`
-- `reply_to`
-- `subject`
-- `message`
-- `sender_name`
-- `site_name`
-- `declaration_date`
+```text
+supabase/migrations/001_create_machine_tracking_tables.sql
+```
 
-## Remplacer les données mock par un import Excel plus tard
+4. Executez ensuite le seed:
 
-1. Centraliser l'import dans un futur service `inventoryService`.
-2. Lire le fichier source depuis un backend ou un stockage partagé.
-3. Transformer les onglets `BASE MAT`, `POSITION MATERIEL` et `ATELIER ENROBE` vers le même schéma que `src/data/machines.js`.
-4. Garder les normalisations de catégories et de localisations pour rester compatibles avec l'UI actuelle.
+```text
+supabase/seed.sql
+```
 
-L'architecture actuelle sépare déjà :
+5. Recuperez:
 
-- les données sources dans `src/data`
-- la logique de formatage dans `src/utils`
-- l'envoi email dans `src/services`
+- `Project URL`
+- `anon public key`
 
-Cela permet d'ajouter plus tard une API ou une base de données sans refondre l'interface.
+6. Placez-les dans `.env`:
+
+```bash
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Comment fonctionne l'historique
+
+- La table `machines` conserve l'etat courant.
+- La table `machine_movements` conserve toutes les transitions.
+- La table `daily_declarations` conserve l'entete de declaration.
+- La table `declaration_machine_items` conserve les machines declarees.
+
+Lorsqu'une declaration est soumise:
+
+1. la declaration est enregistree
+2. les machines selectionnees sont rattachees a cette declaration
+3. la localisation courante de chaque machine est comparee a la nouvelle localisation
+4. si elle change, un mouvement `transfert` est cree
+5. la localisation courante de la machine est mise a jour
+
+## Seed des machines
+
+Le seed utilise l'inventaire stable deja present dans `src/data/machines.js`.
+Le fichier `supabase/seed.sql` insere un jeu realiste de machines et quelques mouvements d'exemple pour tester la timeline.
+
+## Services applicatifs
+
+- `src/services/machineService.js`
+- `src/services/historyService.js`
+- `src/services/declarationService.js`
+
+## Notes de production
+
+- Aucun secret n'est hardcode.
+- Supabase est configure uniquement via variables d'environnement.
+- Si Supabase n'est pas configure, l'UI reste navigable, mais l'historique distant et l'ecriture base de donnees seront limites.

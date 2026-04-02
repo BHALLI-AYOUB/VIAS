@@ -54,8 +54,8 @@ function HomePage() {
                     <div className="mt-2 text-sm text-slate-300">{t('home.sitesAndLocations')}</div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="text-3xl font-bold text-brand-300">2</div>
-                    <div className="mt-2 text-sm text-slate-300">{t('home.declarationModes')}</div>
+                    <div className="text-3xl font-bold text-brand-300">1</div>
+                    <div className="mt-2 text-sm text-slate-300">{t('home.historyModule')}</div>
                   </div>
                 </div>
 
