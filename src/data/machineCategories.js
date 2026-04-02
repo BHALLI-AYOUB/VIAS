@@ -1,0 +1,16 @@
+export const machineCategories = [
+  { label: 'ALIMENTATEUR SUR CHENILLES', description: 'Alimentateurs de chantier et d’enrobés sur chenilles.' },
+  { label: 'AUTOBÉTONNIÈRE', description: 'Camions autobétonnières et équipements de transport béton.' },
+  { label: 'BOBCAT', description: 'Mini chargeuses compactes et unités assimilées BOBCAT.' },
+  { label: 'CHARGEUSE SUR PNEUS', description: 'Chargeuses sur pneus pour centrale, atelier et chantier.' },
+  { label: "COMPACTEUR D'ENROBÉS", description: 'Compacteurs dédiés à la couche d’enrobés.' },
+  { label: 'COMPACTEUR TERRASSEMENT', description: 'Rouleaux et compacteurs affectés au terrassement.' },
+  { label: 'FINISSEUR', description: 'Finisseurs et finisseurs sur chenilles.' },
+  { label: 'MINI PELLE', description: 'Mini pelles pour interventions légères et urbaines.' },
+  { label: 'NIVELEUSE', description: 'Niveleuses pour réglage et profilage.' },
+  { label: 'PELLE CHENILLES', description: 'Pelles hydrauliques sur chenilles.' },
+  { label: 'PELLE PNEUS', description: 'Pelles hydrauliques sur pneus.' },
+  { label: 'RABOTEUSE', description: 'Raboteuses de chaussée.' },
+  { label: 'ROULEAU A PNEUS', description: 'Rouleaux compresseurs à pneus.' },
+  { label: 'TRACTO-PELLE', description: 'Tracto-pelles polyvalentes chantier.' },
+];
