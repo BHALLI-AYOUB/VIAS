@@ -5,10 +5,10 @@ function HistoryFilters({ filters, options, onChange, onReset }) {
   const { isRTL, t } = useLanguage();
 
   return (
-    <section className={`rounded-3xl border border-slate-200 bg-white p-5 shadow-sm ${isRTL ? 'text-right' : ''}`}>
+    <section className={`${isRTL ? 'text-right' : ''}`}>
       <div className={`flex flex-wrap items-center justify-between gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <div>
-          <h2 className="text-2xl text-slate-950">{t('history.filtersTitle')}</h2>
+          <h2 className="text-xl text-slate-950 sm:text-2xl">{t('history.filtersTitle')}</h2>
           <p className="mt-1 text-sm text-slate-500">{t('history.filtersDescription')}</p>
         </div>
         <button

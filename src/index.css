@@ -13,13 +13,23 @@
   color: #111827;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
   margin: 0;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 html[dir='rtl'] body {
@@ -35,6 +45,8 @@ html[dir='rtl'] h4 {
 
 #root {
   min-height: 100vh;
+  width: 100%;
+  overflow-x: clip;
 }
 
 @layer base {
@@ -50,6 +62,11 @@ html[dir='rtl'] h4 {
   textarea {
     @apply outline-none;
   }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer components {
@@ -58,11 +75,19 @@ html[dir='rtl'] h4 {
   }
 
   .field-shell {
-    @apply w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-brand-400 focus:ring-4 focus:ring-brand-100;
+    @apply w-full min-w-0 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 transition focus:border-brand-400 focus:ring-4 focus:ring-brand-100 sm:text-sm;
   }
 
   .badge {
     @apply inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em];
+  }
+
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-surface {
+    @apply rounded-[1.75rem] border border-slate-200/80 bg-white/95 shadow-panel;
   }
 }
 

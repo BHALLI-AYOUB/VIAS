@@ -56,7 +56,7 @@ function Toast({ toast }) {
   const Icon = toast.type === 'success' ? CheckCircle2 : AlertCircle;
 
   return (
-    <div className={`fixed bottom-5 right-5 z-50 max-w-sm rounded-2xl border px-4 py-3 shadow-lg ${tone} ${isRTL ? 'text-right' : ''}`}>
+    <div className={`fixed bottom-4 left-4 right-4 z-50 rounded-2xl border px-4 py-3 shadow-lg sm:left-auto sm:right-5 sm:max-w-sm ${tone} ${isRTL ? 'text-right' : ''}`}>
       <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <Icon className="mt-0.5 h-5 w-5" />
         <div>
@@ -325,15 +325,15 @@ function DeclarationForm() {
   };
 
   return (
-    <section id="declaration" className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_420px]">
-      <div className="space-y-6">
-        <div className={`panel p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
+    <section id="declaration" className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_380px] xl:gap-6">
+      <div className="space-y-4 sm:space-y-5 md:space-y-6">
+        <div className={`panel overflow-hidden p-4 sm:p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
           <div>
             <div className="badge border-brand-200 bg-brand-50 text-brand-900">{t('form.publicBadge')}</div>
-            <h2 className="mt-4 text-4xl text-slate-950">{t('form.title')}</h2>
+            <h2 className="mt-4 text-3xl text-slate-950 sm:text-4xl">{t('form.title')}</h2>
           </div>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2">
             <FormField label={t('form.fields.fullName')} htmlFor="fullName" required error={errors.fullName}>
               <input
                 id="fullName"
@@ -345,7 +345,7 @@ function DeclarationForm() {
             </FormField>
 
             <FormField label={t('form.fields.phone')} htmlFor="phone" required error={errors.phone}>
-              <div className={`grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)] ${isRTL ? 'text-right' : ''}`}>
+              <div className={`grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] ${isRTL ? 'text-right' : ''}`}>
                 <div className="relative">
                   <select
                     aria-label={t('form.fields.phone')}
@@ -419,7 +419,7 @@ function DeclarationForm() {
               />
             </FormField>
 
-            <div className="md:col-span-2">
+            <div className="min-w-0 md:col-span-2">
               <FormField
                 label={t('form.fields.localisation')}
                 htmlFor="localisation"
@@ -465,7 +465,7 @@ function DeclarationForm() {
           </div>
         </div>
 
-        <div className="panel p-6 md:p-8">
+        <div className="panel overflow-hidden p-4 sm:p-6 md:p-8">
           <MachineCategorySection
             categories={machineCategories}
             machinesByCategory={machinesByCategory}
@@ -476,7 +476,7 @@ function DeclarationForm() {
           />
         </div>
 
-        <div className={`panel p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
+        <div className={`panel overflow-hidden p-4 sm:p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
           <FormField label={t('form.fields.notes')} htmlFor="notes" description={t('form.descriptions.notes')}>
             <textarea
               id="notes"

@@ -12,7 +12,7 @@ function HomePage() {
   const { messages, t, isRTL } = useLanguage();
 
   return (
-    <div className={`min-h-screen bg-transparent text-slate-900 transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen overflow-x-hidden bg-transparent text-slate-900 transition-all ${isRTL ? 'text-right' : 'text-left'}`}>
       <Header />
 
       <main>
@@ -20,46 +20,46 @@ function HomePage() {
           <div className="absolute inset-0 bg-grid bg-[size:48px_48px] opacity-10" />
           <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-brand-400/20 blur-3xl" />
           <div className="absolute right-0 top-24 h-80 w-80 rounded-full bg-brand-500/10 blur-3xl" />
-          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-20">
+          <div className="page-shell grid gap-8 py-10 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:py-20">
             <div className="relative z-10">
               <span className="badge border-brand-300/40 bg-brand-400/10 text-brand-200">{t('home.heroBadge')}</span>
-              <h1 className="mt-6 max-w-3xl text-5xl leading-none text-white md:text-6xl">{t('home.heroTitle')}</h1>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 md:text-lg">{t('home.heroDescription')}</p>
-              <div className={`mt-8 flex flex-wrap gap-4 ${isRTL ? 'justify-end' : ''}`}>
+              <h1 className="mt-5 max-w-3xl text-[2.8rem] leading-[0.96] text-white sm:text-5xl md:text-6xl">{t('home.heroTitle')}</h1>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base md:text-lg">{t('home.heroDescription')}</p>
+              <div className={`mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap ${isRTL ? 'sm:justify-end' : ''}`}>
                 <a
                   href="#declaration"
-                  className={`inline-flex items-center gap-2 rounded-full bg-brand-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-brand-300 ${
+                  className={`inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-brand-400 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-brand-300 sm:w-auto ${
                     isRTL ? 'flex-row-reverse' : ''
                   }`}
                 >
                   {t('home.startDeclaration')}
                   <ArrowDownRight className="h-4 w-4" />
                 </a>
-                <div className={`inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm text-slate-300 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`inline-flex min-h-[52px] items-center justify-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm text-slate-300 sm:w-auto ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Building2 className="h-4 w-4 text-brand-300" />
-                  {t('home.statsLocations', { count: localisations.length })} • {t('home.statsMachines', { count: machines.length })}
+                  <span className="text-center">{t('home.statsLocations', { count: localisations.length })} • {t('home.statsMachines', { count: machines.length })}</span>
                 </div>
               </div>
             </div>
 
             <div className="relative z-10">
-              <div className="panel border-white/10 bg-white/5 p-6 text-white shadow-none">
-                <div className="grid gap-4 sm:grid-cols-3">
+              <div className="panel border-white/10 bg-white/5 p-4 text-white shadow-none sm:p-6">
+                <div className="grid gap-3 sm:grid-cols-3">
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="text-3xl font-bold text-brand-300">{machineCategories.length}</div>
+                    <div className="text-2xl font-bold text-brand-300 sm:text-3xl">{machineCategories.length}</div>
                     <div className="mt-2 text-sm text-slate-300">{t('home.officialCategories')}</div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="text-3xl font-bold text-brand-300">{localisations.length}</div>
+                    <div className="text-2xl font-bold text-brand-300 sm:text-3xl">{localisations.length}</div>
                     <div className="mt-2 text-sm text-slate-300">{t('home.sitesAndLocations')}</div>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="text-3xl font-bold text-brand-300">1</div>
+                    <div className="text-2xl font-bold text-brand-300 sm:text-3xl">1</div>
                     <div className="mt-2 text-sm text-slate-300">{t('home.historyModule')}</div>
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-3">
+                <div className="mt-4 space-y-3 sm:mt-6">
                   {messages.home.highlights.map((highlight, index) => {
                     const Icon = highlightIcons[index];
                     return (
@@ -82,7 +82,7 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8 lg:py-14">
+        <section className="page-shell py-6 sm:py-8 lg:py-14">
           <DeclarationForm />
         </section>
       </main>

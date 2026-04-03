@@ -1,7 +1,7 @@
 function FormField({ label, htmlFor, required, description, error, children }) {
   return (
-    <label htmlFor={htmlFor} className="block space-y-2">
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+    <label htmlFor={htmlFor} className="block min-w-0 space-y-2">
+      <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-800">
         <span>{label}</span>
         {required ? <span className="text-brand-600">*</span> : null}
       </div>

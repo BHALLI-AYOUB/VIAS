@@ -60,24 +60,24 @@ function MachineDetailsPage() {
   }, [id, t]);
 
   return (
-    <div className={`min-h-screen bg-slate-50 text-slate-900 ${isRTL ? 'text-right' : 'text-left'}`}>
+    <div className={`min-h-screen overflow-x-hidden bg-slate-50 text-slate-900 ${isRTL ? 'text-right' : 'text-left'}`}>
       <Header />
 
-      <main className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      <main className="page-shell py-6 sm:py-8 lg:py-10">
         {loading ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500">{t('history.loading')}</div>
         ) : error ? (
           <div className="rounded-3xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">{error}</div>
         ) : (
           <div className="space-y-6">
-            <section className="rounded-[2rem] bg-white p-6 shadow-panel">
+            <section className="rounded-[2rem] bg-white p-4 shadow-panel sm:p-6">
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">{getCategoryLabel(machine.categorie)}</div>
-              <h1 className="mt-3 text-4xl text-slate-950">{machine.numero_parc}</h1>
+              <h1 className="mt-3 text-3xl text-slate-950 sm:text-4xl">{machine.numero_parc}</h1>
               <p className="mt-3 text-sm text-slate-500">
                 {machine.marque || '-'} • {machine.modele || '-'}
               </p>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-4">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div className="rounded-2xl bg-slate-50 p-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t('history.currentLocation')}</div>
                   <div className="mt-2 text-lg font-semibold text-slate-900">{machine.localisation_actuelle || '-'}</div>

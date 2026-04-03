@@ -5,8 +5,8 @@ function LatestMovementsWidget({ movements = [], loading }) {
   const { isRTL, t, locale } = useLanguage();
 
   return (
-    <section className={`rounded-3xl border border-slate-200 bg-white p-5 shadow-sm ${isRTL ? 'text-right' : ''}`}>
-      <h2 className="text-2xl text-slate-950">{t('history.latestMovements')}</h2>
+    <section className={`rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5 ${isRTL ? 'text-right' : ''}`}>
+      <h2 className="text-xl text-slate-950 sm:text-2xl">{t('history.latestMovements')}</h2>
       <p className="mt-1 text-sm text-slate-500">{t('history.latestMovementsDescription')}</p>
 
       <div className="mt-4 space-y-3">

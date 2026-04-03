@@ -38,18 +38,18 @@ function SummaryPanel({ formData, summary, onSendEmail, onSendWhatsApp, onClearF
   const { isRTL, t } = useLanguage();
 
   return (
-    <aside className={`panel top-24 h-fit p-5 lg:sticky ${isRTL ? 'text-right' : ''}`}>
+    <aside className={`panel order-first h-fit overflow-hidden p-4 sm:p-5 xl:order-none xl:sticky xl:top-24 ${isRTL ? 'text-right' : ''}`}>
       <div className={`flex items-start justify-between gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <div>
           <div className="badge border-brand-200 bg-brand-50 text-brand-900">{t('summary.previewBadge')}</div>
-          <h2 className="mt-3 text-2xl text-slate-950">{t('summary.title')}</h2>
+          <h2 className="mt-3 text-xl text-slate-950 sm:text-2xl">{t('summary.title')}</h2>
         </div>
         <div className="rounded-2xl bg-slate-100 p-3 text-slate-700">
           <FileText className="h-5 w-5" />
         </div>
       </div>
 
-      <div className="mt-5 space-y-3 rounded-3xl bg-ink p-5 text-white">
+      <div className="mt-4 space-y-3 rounded-3xl bg-ink p-4 text-white sm:mt-5 sm:p-5">
         <div className="text-lg font-semibold">
           {formData.fullName || t('summary.unnamed')} {formData.localisation ? `• ${formData.localisation}` : ''}
         </div>
@@ -73,7 +73,7 @@ function SummaryPanel({ formData, summary, onSendEmail, onSendWhatsApp, onClearF
         <div className="mt-2 text-3xl font-bold text-emerald-900">{summary.metrics.available}</div>
       </div>
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-4 space-y-4 sm:mt-5">
         <SummaryList title={t('summary.detailedAvailable')} items={summary.availableGroups} />
       </div>
 
@@ -88,7 +88,7 @@ function SummaryPanel({ formData, summary, onSendEmail, onSendWhatsApp, onClearF
         <button
           type="button"
           onClick={onClearForm}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Eraser className="h-4 w-4" />
           {t('summary.buttons.clearForm')}
@@ -97,7 +97,7 @@ function SummaryPanel({ formData, summary, onSendEmail, onSendWhatsApp, onClearF
           type="button"
           onClick={onSendEmail}
           disabled={isSending}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400 ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400 ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Mail className="h-4 w-4" />
           {isSending ? t('summary.buttons.sendingEmail') : t('summary.buttons.sendEmail')}
@@ -105,7 +105,7 @@ function SummaryPanel({ formData, summary, onSendEmail, onSendWhatsApp, onClearF
         <button
           type="button"
           onClick={onSendWhatsApp}
-          className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 text-sm font-semibold text-white transition hover:bg-[#1fb759] ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 text-sm font-semibold text-white transition hover:bg-[#1fb759] ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <MessageCircle className="h-4 w-4" />
           {t('summary.buttons.sendWhatsApp')}

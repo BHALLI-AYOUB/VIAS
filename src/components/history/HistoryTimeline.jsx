@@ -17,18 +17,18 @@ function HistoryTimeline({ movements = [], compact = false }) {
 
   return (
     <section className="space-y-4">
-      <div className={`flex items-center justify-between gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
         <div>
-          <h2 className="text-2xl text-slate-950">{t('history.timelineTitle')}</h2>
+          <h2 className="text-xl text-slate-950 sm:text-2xl">{t('history.timelineTitle')}</h2>
           <p className="mt-1 text-sm text-slate-500">
             {movements.length ? t('history.timelineCount', { count: movements.length }) : t('history.noResults')}
           </p>
         </div>
-        <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`grid grid-cols-2 gap-2 sm:flex sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
           <button
             type="button"
             onClick={() => window.print()}
-            className={`inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 ${isRTL ? 'flex-row-reverse' : ''}`}
+            className={`inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <Printer className="h-4 w-4" />
             {t('history.print')}
@@ -36,7 +36,7 @@ function HistoryTimeline({ movements = [], compact = false }) {
           <button
             type="button"
             onClick={handleExport}
-            className={`inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 ${isRTL ? 'flex-row-reverse' : ''}`}
+            className={`inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <Download className="h-4 w-4" />
             {t('history.export')}
@@ -58,7 +58,7 @@ function HistoryTimeline({ movements = [], compact = false }) {
                 </span>
               </div>
 
-              <div className={`mt-4 grid gap-4 ${compact ? '' : 'md:grid-cols-2'} ${isRTL ? 'text-right' : ''}`}>
+              <div className={`mt-4 grid gap-4 ${compact ? '' : 'sm:grid-cols-2'} ${isRTL ? 'text-right' : ''}`}>
                 <div>
                   <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{t('history.from')}</div>
                   <div className="mt-1 text-sm text-slate-700">{movement.localisation_depart || t('history.noDeparture')}</div>

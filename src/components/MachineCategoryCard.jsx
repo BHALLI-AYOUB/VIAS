@@ -21,14 +21,14 @@ function MachineCategoryCard({
           <MachineImage
             category={category.label}
             alt={getCategoryLabel(category.label)}
-            className="h-52 w-full md:h-full md:min-h-[220px]"
+            className="h-40 w-full sm:h-52 md:h-full md:min-h-[220px]"
           />
         </div>
 
-        <div className={`p-5 ${isRTL ? 'text-right' : ''}`}>
-          <div className={`flex items-start justify-between gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`min-w-0 p-4 sm:p-5 ${isRTL ? 'text-right' : ''}`}>
+          <div className={`flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             <div>
-              <h3 className="text-xl text-slate-900">{getCategoryLabel(category.label)}</h3>
+              <h3 className="text-lg text-slate-900 sm:text-xl">{getCategoryLabel(category.label)}</h3>
               <p className="mt-1 text-sm leading-6 text-slate-500">{getCategoryDescription(category.label)}</p>
             </div>
             <div className={`flex flex-wrap gap-2 ${isRTL ? 'justify-end' : 'justify-start'}`}>
@@ -36,7 +36,7 @@ function MachineCategoryCard({
             </div>
           </div>
 
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 sm:mt-5">
             <div
               className={`mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 ${
                 isRTL ? 'flex-row-reverse' : ''
@@ -49,7 +49,7 @@ function MachineCategoryCard({
             <button
               type="button"
               onClick={() => onToggleCategory(category.label)}
-              className={`inline-flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
+              className={`inline-flex min-h-[50px] w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
                 isActive
                   ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
                   : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
