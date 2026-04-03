@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { translations } from '../i18n/translations';
+import { extraTranslations } from '../i18n/extraTranslations';
 
 const STORAGE_KEY = 'vias-language';
 const LanguageContext = createContext(null);
@@ -16,6 +17,21 @@ function interpolate(value, variables = {}) {
   return value.replace(/\{(\w+)\}/g, (_, key) => variables[key] ?? `{${key}}`);
 }
 
+function deepMerge(baseObject = {}, extraObject = {}) {
+  const result = { ...baseObject };
+
+  Object.entries(extraObject).forEach(([key, value]) => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      result[key] = deepMerge(baseObject[key], value);
+      return;
+    }
+
+    result[key] = value;
+  });
+
+  return result;
+}
+
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => window.localStorage.getItem(STORAGE_KEY) || 'fr');
   const isRTL = language === 'ar';
@@ -27,7 +43,7 @@ export function LanguageProvider({ children }) {
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
   }, [isRTL, language]);
 
-  const messages = translations[language] || translations.fr;
+  const messages = deepMerge(translations[language] || translations.fr, extraTranslations[language] || {});
 
   const value = useMemo(() => {
     const t = (path, variables) => {

@@ -36,6 +36,8 @@ npm run preview
 ## Routes
 
 - `/` : formulaire de declaration
+- `/admin/login` : connexion admin
+- `/admin/verify-email-code` : verification admin par code email
 - `/historique` : recherche historique et timeline
 - `/machines/:id` : detail machine
 
@@ -49,22 +51,48 @@ npm run preview
 supabase/migrations/001_create_machine_tracking_tables.sql
 ```
 
-4. Executez ensuite le seed:
+4. Executez ensuite les migrations de securite et de verification admin:
+
+```text
+supabase/migrations/002_admin_auth_policies.sql
+supabase/migrations/003_create_admin_email_verifications.sql
+```
+
+5. Executez ensuite le seed:
 
 ```text
 supabase/seed.sql
 ```
 
-5. Recuperez:
+6. Recuperez:
 
 - `Project URL`
 - `anon public key`
 
-6. Placez-les dans `.env`:
+7. Placez-les dans `.env`:
 
 ```bash
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+8. Deployer la fonction d'envoi du code admin:
+
+```bash
+supabase functions deploy send-admin-verification-code --no-verify-jwt
+```
+
+9. Configurer les secrets de la fonction:
+
+```bash
+supabase secrets set RESEND_API_KEY=your_resend_api_key
+supabase secrets set ADMIN_VERIFICATION_FROM_EMAIL=your-verified-sender@example.com
+```
+
+10. Si la fonction a deja ete deployee avant cette mise a jour, redeployez-la pour appliquer la configuration CORS/JWT:
+
+```bash
+supabase functions deploy send-admin-verification-code --no-verify-jwt
 ```
 
 ## Comment fonctionne l'historique

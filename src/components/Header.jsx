@@ -1,7 +1,8 @@
-import { Building2, Languages } from 'lucide-react';
+import { Building2, Languages, LogIn, LogOut, ShieldCheck } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import BrandLogo from './BrandLogo';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../hooks/useAuth';
 
 function LanguageButton({ code, label, active, onClick }) {
   return (
@@ -23,6 +24,8 @@ function LanguageButton({ code, label, active, onClick }) {
 
 function Header() {
   const { language, setLanguage, isRTL, t } = useLanguage();
+  const { isAdmin, isEmailVerifiedAdmin, logout, adminEmail } = useAuth();
+  const canAccessAdmin = isAdmin && isEmailVerifiedAdmin;
   const navLinkClass = ({ isActive }) =>
     `rounded-full px-4 py-2 font-medium transition ${
       isActive ? 'bg-brand-50 text-brand-900' : 'text-slate-700 hover:bg-slate-100'
@@ -43,14 +46,41 @@ function Header() {
               <NavLink to="/" className={navLinkClass} end>
                 {t('header.home')}
               </NavLink>
-              <NavLink to="/historique" className={navLinkClass}>
-                {t('header.history')}
-              </NavLink>
+              {canAccessAdmin ? (
+                <NavLink to="/historique" className={navLinkClass}>
+                  {t('header.history')}
+                </NavLink>
+              ) : null}
               <a href="/#declaration" className="rounded-full bg-ink px-4 py-2 font-medium text-white transition hover:bg-slate-800">
                 {t('header.newDeclaration')}
               </a>
+              {canAccessAdmin ? (
+                <button
+                  type="button"
+                  onClick={() => logout('/')}
+                  className={`inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-50 ${isRTL ? 'flex-row-reverse' : ''}`}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t('header.logout')}
+                </button>
+              ) : (
+                <NavLink
+                  to="/admin/login"
+                  className={`inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 font-medium text-brand-900 transition hover:bg-brand-100 ${isRTL ? 'flex-row-reverse' : ''}`}
+                >
+                  <LogIn className="h-4 w-4" />
+                  {t('header.adminLogin')}
+                </NavLink>
+              )}
             </nav>
           </div>
+
+          {canAccessAdmin ? (
+            <div className={`hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs text-emerald-800 xl:inline-flex ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <ShieldCheck className="h-4 w-4" />
+              <span>{adminEmail || t('header.adminArea')}</span>
+            </div>
+          ) : null}
 
           <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`} aria-label={t('header.switcherAria')}>
             <LanguageButton

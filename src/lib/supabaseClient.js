@@ -7,7 +7,9 @@ export const isSupabaseConfigured = Boolean(VITE_SUPABASE_URL && VITE_SUPABASE_A
 const supabase = isSupabaseConfigured
   ? createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, {
       auth: {
-        persistSession: false,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
     })
   : null;

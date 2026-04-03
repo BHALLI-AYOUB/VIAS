@@ -3,16 +3,31 @@ import HomePage from './pages/HomePage';
 import HistoriquePage from './pages/HistoriquePage';
 import MachineDetailsPage from './pages/MachineDetailsPage';
 import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import AdminOnlyRoute from './components/auth/AdminOnlyRoute';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminVerifyEmailCodePage from './pages/AdminVerifyEmailCodePage';
 
 function App() {
   return (
     <LanguageProvider>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/historique" element={<HistoriquePage />} />
-        <Route path="/machines/:id" element={<MachineDetailsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/verify-email-code" element={<AdminVerifyEmailCodePage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AdminOnlyRoute />}>
+              <Route path="/historique" element={<HistoriquePage />} />
+              <Route path="/machines/:id" element={<MachineDetailsPage />} />
+            </Route>
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
     </LanguageProvider>
   );
 }
