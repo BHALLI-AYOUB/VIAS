@@ -11,7 +11,7 @@ function AdminLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, isRTL } = useLanguage();
-  const { login, isAdmin, isEmailVerifiedAdmin, isAuthLoading } = useAuth();
+  const { login, isAdmin, isAuthLoading } = useAuth();
 
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
@@ -23,12 +23,8 @@ function AdminLoginPage() {
     return <AuthLoadingScreen title={t('auth.login.title')} description={t('auth.login.description')} />;
   }
 
-  if (isAdmin && isEmailVerifiedAdmin) {
+  if (isAdmin) {
     return <Navigate to="/historique" replace />;
-  }
-
-  if (isAdmin && !isEmailVerifiedAdmin && !isAuthLoading) {
-    return <Navigate to="/admin/verify-email-code" replace state={{ from: location.state?.from }} />;
   }
 
   const handleSubmit = async (event) => {
@@ -42,14 +38,14 @@ function AdminLoginPage() {
 
     try {
       const result = await login({ email, password });
-      if (result.requiresEmailVerification) {
-        navigate('/admin/verify-email-code', { replace: true, state: { from: location.state?.from } });
-        return;
-      }
       navigate(location.state?.from?.pathname || '/historique', { replace: true });
     } catch (loginError) {
       if (loginError.message === 'admin-not-allowed') {
         setError(t('auth.login.notAllowed'));
+        return;
+      }
+      if (loginError.message === 'Invalid login credentials') {
+        setError(t('auth.login.invalidCredentials') || 'Identifiants invalides.');
         return;
       }
       if (loginError.message === 'admin-verification-service-unavailable') {

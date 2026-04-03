@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import AuthLoadingScreen from './AuthLoadingScreen';
 
 function AdminOnlyRoute() {
-  const { isAuthLoading, isAuthenticated, isAdmin, isEmailVerifiedAdmin } = useAuth();
+  const { isAuthLoading, isAuthenticated, isAdmin } = useAuth();
   const location = useLocation();
 
   if (isAuthLoading) {
@@ -16,10 +16,6 @@ function AdminOnlyRoute() {
 
   if (!isAdmin) {
     return <Navigate to="/admin/login" replace state={{ from: location, unauthorized: true }} />;
-  }
-
-  if (!isEmailVerifiedAdmin) {
-    return <Navigate to="/admin/verify-email-code" replace state={{ from: location }} />;
   }
 
   return <Outlet />;

@@ -41,6 +41,17 @@ function jsonResponse(body: Record<string, unknown>, status = 200) {
   });
 }
 
+function errorResponse(message: string, status: number, details?: Record<string, unknown>) {
+  return jsonResponse(
+    {
+      success: false,
+      error: message,
+      ...(details ? { details } : {}),
+    },
+    status,
+  );
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return jsonResponse({ success: true }, 200);
@@ -59,42 +70,33 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const resendApiKey = Deno.env.get('RESEND_API_KEY') ?? '';
     const fromEmail = Deno.env.get('ADMIN_VERIFICATION_FROM_EMAIL') ?? '';
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      console.error('[send-admin-verification-code] Missing Supabase server credentials.');
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Missing Supabase server credentials.',
-        },
-        500,
-      );
+    const supabaseKey = serviceRoleKey || anonKey;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[send-admin-verification-code] Missing Supabase credentials.');
+      return errorResponse('Missing Supabase credentials.', 500, {
+        hasSupabaseUrl: Boolean(supabaseUrl),
+        hasSupabaseKey: Boolean(supabaseKey),
+      });
     }
 
     if (!resendApiKey || !fromEmail) {
       console.error('[send-admin-verification-code] Missing email provider configuration.');
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Missing email provider configuration.',
-        },
-        500,
-      );
+      return errorResponse('Missing email provider configuration.', 500, {
+        hasResendApiKey: Boolean(resendApiKey),
+        hasFromEmail: Boolean(fromEmail),
+      });
     }
 
     const authHeader = req.headers.get('Authorization') ?? '';
     const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
 
     if (!accessToken) {
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Missing authenticated admin session.',
-        },
-        401,
-      );
+      return errorResponse('Missing authenticated admin session.', 401);
     }
 
     let payload: { userId?: string; user_id?: string; email?: string } | null = null;
@@ -103,72 +105,38 @@ serve(async (req) => {
       payload = await req.json();
     } catch (error) {
       console.error('[send-admin-verification-code] Invalid JSON body.', error);
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Invalid JSON request body.',
-        },
-        400,
-      );
+      return errorResponse('Invalid JSON request body.', 400);
     }
 
     const userId = payload?.userId ?? payload?.user_id ?? '';
     const normalizedEmail = normalizeEmail(payload?.email ?? '');
 
     if (!userId) {
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Missing user_id.',
-        },
-        400,
-      );
+      return errorResponse('Missing user_id.', 400);
     }
 
     if (!normalizedEmail) {
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Missing email.',
-        },
-        400,
-      );
+      return errorResponse('Missing email.', 400);
     }
 
     if (!ADMIN_EMAILS.has(normalizedEmail)) {
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Admin email not allowed.',
-        },
-        403,
-      );
+      return errorResponse('Admin email not allowed.', 403, { email: normalizedEmail });
     }
 
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {},
+    });
     const { data: authUserData, error: authUserError } = await supabase.auth.getUser(accessToken);
 
     if (authUserError || !authUserData.user) {
       console.error('[send-admin-verification-code] Unable to validate admin session.', authUserError);
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Unable to validate admin session.',
-        },
-        401,
-      );
+      return errorResponse('Unable to validate admin session.', 401);
     }
 
     const authenticatedEmail = normalizeEmail(authUserData.user.email ?? '');
 
     if (authUserData.user.id !== userId || authenticatedEmail !== normalizedEmail) {
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Authenticated admin identity does not match the request.',
-        },
-        403,
-      );
+      return errorResponse('Authenticated admin identity does not match the request.', 403);
     }
 
     const code = generateCode();
@@ -184,13 +152,12 @@ serve(async (req) => {
 
     if (deleteError) {
       console.error('[send-admin-verification-code] Failed to clear previous pending codes.', deleteError);
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Failed to clear previous pending codes.',
-        },
-        500,
-      );
+      return errorResponse('Failed to clear previous pending codes.', 500, {
+        code: deleteError.code,
+        details: deleteError.details,
+        hint: deleteError.hint,
+        message: deleteError.message,
+      });
     }
 
     const { error: insertError } = await supabase.from('admin_email_verifications').insert({
@@ -203,13 +170,12 @@ serve(async (req) => {
 
     if (insertError) {
       console.error('[send-admin-verification-code] Failed to store verification code.', insertError);
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Failed to store verification code.',
-        },
-        500,
-      );
+      return errorResponse('Failed to store verification code.', 500, {
+        code: insertError.code,
+        details: insertError.details,
+        hint: insertError.hint,
+        message: insertError.message,
+      });
     }
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
@@ -236,13 +202,10 @@ serve(async (req) => {
     if (!emailResponse.ok) {
       const emailError = await emailResponse.text();
       console.error('[send-admin-verification-code] Email provider returned an error.', emailError);
-      return jsonResponse(
-        {
-          success: false,
-          error: 'Failed to send verification email.',
-        },
-        500,
-      );
+      return errorResponse('Failed to send verification email.', 500, {
+        status: emailResponse.status,
+        providerError: emailError,
+      });
     }
 
     return jsonResponse(
@@ -255,12 +218,6 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('[send-admin-verification-code] Unexpected error.', error);
-    return jsonResponse(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unexpected error',
-      },
-      500,
-    );
+    return errorResponse(error instanceof Error ? error.message : 'Unexpected error', 500);
   }
 });

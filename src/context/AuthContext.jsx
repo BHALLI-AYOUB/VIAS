@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { getAdminEmail, getSession, isAdminUser, signInWithPassword, signOut, subscribeToAuthChanges } from '../services/authService';
 import {
   clearStoredAdminVerification,
-  requestAdminVerificationCode,
-  validateStoredAdminVerification,
   verifyAdminEmailCode,
 } from '../services/adminVerificationService';
 import { isSupabaseConfigured } from '../lib/supabaseClient';
@@ -57,32 +55,9 @@ export function AuthProvider({ children }) {
       setSession(nextSession);
       setUser(nextUser);
       setIsAdmin(true);
-
-      try {
-        const verification = await validateStoredAdminVerification({
-          userId: nextUser.id,
-          email: nextUser.email,
-        });
-
-        if (!active) {
-          return;
-        }
-
-        setIsEmailVerifiedAdmin(Boolean(verification));
-        setVerificationInfo(verification);
-      } catch (error) {
-        if (!active) {
-          return;
-        }
-
-        console.error('[AuthContext] Failed to resolve admin email verification state.', error);
-        setIsEmailVerifiedAdmin(false);
-        setVerificationInfo(null);
-      } finally {
-        if (active) {
-          setIsAuthLoading(false);
-        }
-      }
+      setIsEmailVerifiedAdmin(true);
+      setVerificationInfo(null);
+      setIsAuthLoading(false);
     }
 
     async function bootstrap() {
@@ -137,16 +112,11 @@ export function AuthProvider({ children }) {
       setSession(authData.session);
       setUser(authData.user);
       setIsAdmin(true);
-      setIsEmailVerifiedAdmin(false);
+      setIsEmailVerifiedAdmin(true);
       setVerificationInfo(null);
 
-      await requestAdminVerificationCode({
-        userId: authData.user.id,
-        email: authData.user.email,
-      });
-
       return {
-        requiresEmailVerification: true,
+        requiresEmailVerification: false,
       };
     } finally {
       setIsAuthLoading(false);

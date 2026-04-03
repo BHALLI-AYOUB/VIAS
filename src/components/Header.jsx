@@ -25,10 +25,10 @@ function LanguageButton({ label, active, onClick }) {
 
 function Header() {
   const { language, setLanguage, isRTL, t } = useLanguage();
-  const { isAdmin, isEmailVerifiedAdmin, logout, adminEmail } = useAuth();
+  const { isAdmin, logout, adminEmail } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const canAccessAdmin = isAdmin && isEmailVerifiedAdmin;
+  const canAccessAdmin = isAdmin;
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';

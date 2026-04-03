@@ -7,7 +7,6 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminOnlyRoute from './components/auth/AdminOnlyRoute';
 import AdminLoginPage from './pages/AdminLoginPage';
-import AdminVerifyEmailCodePage from './pages/AdminVerifyEmailCodePage';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin/verify-email-code" element={<AdminVerifyEmailCodePage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminOnlyRoute />}>

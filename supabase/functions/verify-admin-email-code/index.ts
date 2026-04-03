@@ -55,10 +55,13 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      console.error('[verify-admin-email-code] Missing Supabase server credentials.');
-      return jsonResponse({ success: false, error: 'Missing Supabase server credentials.' }, 500);
+    const supabaseKey = serviceRoleKey || anonKey;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[verify-admin-email-code] Missing Supabase credentials.');
+      return jsonResponse({ success: false, error: 'Missing Supabase credentials.' }, 500);
     }
 
     const authHeader = req.headers.get('Authorization') ?? '';
@@ -97,7 +100,9 @@ serve(async (req) => {
       return jsonResponse({ success: false, error: 'Admin email not allowed.' }, 403);
     }
 
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {},
+    });
     const { data: authUserData, error: authUserError } = await supabase.auth.getUser(accessToken);
 
     if (authUserError || !authUserData.user) {

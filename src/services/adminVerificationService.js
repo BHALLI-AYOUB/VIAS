@@ -26,6 +26,16 @@ export function getStoredAdminVerification() {
 }
 
 function mapFunctionError(error) {
+  const contextError =
+    error?.context?.error ||
+    error?.context?.body?.error ||
+    error?.context?.data?.error ||
+    error?.context?.message;
+
+  if (contextError) {
+    return new Error(String(contextError));
+  }
+
   if (error?.name === 'FunctionsFetchError') {
     return new Error('admin-verification-service-unavailable');
   }
