@@ -5,6 +5,25 @@ function mapSelectedMachineIds(selectedMachineIds = []) {
   return inventoryMachines.filter((machine) => selectedMachineIds.includes(machine.id));
 }
 
+function generateUuid() {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  const bytes = globalThis.crypto?.getRandomValues
+    ? globalThis.crypto.getRandomValues(new Uint8Array(16))
+    : Uint8Array.from({ length: 16 }, () => Math.floor(Math.random() * 256));
+
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0'));
+
+  return `${hex.slice(0, 4).join('')}-${hex.slice(4, 6).join('')}-${hex.slice(6, 8).join('')}-${hex
+    .slice(8, 10)
+    .join('')}-${hex.slice(10, 16).join('')}`;
+}
+
 async function ensureMachineRows(supabase, selectedMachines) {
   const numeroParcList = selectedMachines.map((machine) => machine.numeroParc);
 
@@ -60,10 +79,12 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
 
   const selectedMachines = mapSelectedMachineIds(selectedMachineIds);
   const supabase = getSupabaseClient();
+  const declarationId = generateUuid();
 
-  const { data: declaration, error: declarationError } = await supabase
+  const { error: declarationError } = await supabase
     .from('daily_declarations')
     .insert({
+      id: declarationId,
       nom_complet: formData.fullName,
       telephone: formData.phone,
       email: formData.email || null,
@@ -72,9 +93,7 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
       date_declaration: formData.date,
       remarque: formData.notes || null,
       canal_envoi: canalEnvoi,
-    })
-    .select()
-    .single();
+    }, { returning: 'minimal' });
 
   if (declarationError) {
     console.error('[declarationService.persistDeclaration] Failed to insert declaration header.', declarationError);
@@ -83,7 +102,7 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
 
   if (!selectedMachines.length) {
     return {
-      declarationId: declaration.id,
+      declarationId,
       movementCount: 0,
       skipped: false,
     };
@@ -94,7 +113,7 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
     const dbMachine = machineRowsByParc.get(machine.numeroParc);
 
     return {
-      declaration_id: declaration.id,
+      declaration_id: declarationId,
       machine_id: dbMachine.id,
       numero_parc: machine.numeroParc,
       categorie: machine.categorie,
@@ -128,7 +147,7 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
         chantier: nextLocation,
         remarque: formData.notes || null,
         declared_by: formData.fullName,
-        source_declaration_id: declaration.id,
+        source_declaration_id: declarationId,
       });
     }
 
@@ -177,7 +196,7 @@ export async function persistDeclaration({ formData, selectedMachineIds, canalEn
   }
 
   return {
-    declarationId: declaration.id,
+    declarationId,
     movementCount: movementsToInsert.length,
     skipped: false,
   };
