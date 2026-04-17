@@ -13,12 +13,12 @@ function MachineImage({ category, alt, className = '', previewable = true }) {
   const fallback = useMemo(
     () => (
       <div
-        className={`flex h-full w-full items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-100 text-slate-400 ${className}`}
+        className={`flex h-full w-full items-center justify-center rounded-2xl border border-dashed border-white/10 bg-[#20212a] text-slate-500 ${className}`}
         aria-label={t('machineImage.unavailableLabel', { alt })}
       >
         <div className="flex flex-col items-center gap-2 px-3 text-center">
           <ImageOff className="h-6 w-6" />
-          <span className="text-xs font-medium uppercase tracking-[0.18em]">{getCategoryLabel(category)}</span>
+          <span className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">{getCategoryLabel(category)}</span>
         </div>
       </div>
     ),
@@ -30,7 +30,7 @@ function MachineImage({ category, alt, className = '', previewable = true }) {
   }
 
   const content = (
-    <div className={`group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 ${className}`}>
+    <div className={`group relative overflow-hidden rounded-2xl border border-white/8 bg-[#23252f] ${className}`}>
       <img
         src={source}
         alt={alt}
@@ -41,7 +41,7 @@ function MachineImage({ category, alt, className = '', previewable = true }) {
 
       {previewable ? (
         <div className={`pointer-events-none absolute inset-x-3 bottom-3 flex ${isRTL ? 'justify-start' : 'justify-end'}`}>
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/75 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+          <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/78 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
             <Expand className="h-3.5 w-3.5" />
             {t('machineImage.enlarge')}
           </span>

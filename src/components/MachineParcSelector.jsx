@@ -6,8 +6,8 @@ function MachineParcSelector({ category, machines, selectedIds, onToggleMachine 
   const selectedMachines = machines.filter((machine) => selectedIds.includes(machine.id));
 
   return (
-    <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-      <div className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+    <div className="site-subpanel mt-5 rounded-[1.25rem] p-4">
+      <div className={`mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-200 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <CheckSquare2 className="h-4 w-4" />
         {t('machineCard.parcSelectorTitle', { category: getCategoryLabel(category) })}
       </div>
@@ -23,7 +23,7 @@ function MachineParcSelector({ category, machines, selectedIds, onToggleMachine 
                 key={`chip-${machine.id}`}
                 type="button"
                 onClick={() => onToggleMachine(category, machine.id)}
-                className={`inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100 ${isRTL ? 'flex-row-reverse' : ''}`}
+                className={`inline-flex items-center gap-2 rounded-full border border-brand-300/20 bg-brand-400/10 px-3 py-1.5 text-xs font-semibold text-brand-200 transition hover:bg-brand-400/18 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
                 <span>{machine.numeroParc}</span>
                 <X className="h-3.5 w-3.5" />
@@ -33,7 +33,7 @@ function MachineParcSelector({ category, machines, selectedIds, onToggleMachine 
         </div>
       ) : null}
 
-      <div className="grid gap-3">
+      <div className="grid gap-3 xl:grid-cols-2">
         {machines.map((machine) => {
           const checked = selectedIds.includes(machine.id);
 
@@ -41,7 +41,9 @@ function MachineParcSelector({ category, machines, selectedIds, onToggleMachine 
             <label
               key={machine.id}
               className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition ${
-                checked ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white hover:border-slate-300'
+                checked
+                  ? 'border-brand-300/25 bg-brand-400/10'
+                  : 'border-white/8 bg-[linear-gradient(180deg,rgba(21,24,32,0.96),rgba(13,15,22,0.98))] hover:border-white/18 hover:bg-[#161821]'
               } ${isRTL ? 'flex-row-reverse text-right' : ''}`}
             >
               <input
@@ -50,15 +52,15 @@ function MachineParcSelector({ category, machines, selectedIds, onToggleMachine 
                 onChange={() => onToggleMachine(category, machine.id)}
                 className="sr-only"
               />
-              <div className={`mt-0.5 shrink-0 ${checked ? 'text-emerald-700' : 'text-slate-400'}`}>
+              <div className={`mt-0.5 shrink-0 ${checked ? 'text-brand-200' : 'text-slate-500'}`}>
                 {checked ? <CheckSquare2 className="h-5 w-5" /> : <Square className="h-5 w-5" />}
               </div>
               <div className="min-w-0">
-                <div className="font-semibold text-slate-900">{machine.numeroParc}</div>
-                <div className="mt-1 text-sm text-slate-600">
+                <div className="font-semibold text-slate-100">{machine.numeroParc}</div>
+                <div className="mt-1 text-sm text-slate-400">
                   {machine.marque || '-'} - {machine.type || '-'}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-400">{machine.localisation}</div>
+                <div className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-500">{machine.localisation}</div>
               </div>
             </label>
           );

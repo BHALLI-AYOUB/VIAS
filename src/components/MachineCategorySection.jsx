@@ -13,12 +13,12 @@ function MachineCategorySection({
 
   return (
     <section className="space-y-4 sm:space-y-5">
-      <div className={`flex flex-col gap-3 md:flex-row md:items-end md:justify-between ${isRTL ? 'text-right' : ''}`}>
+      <div className={`flex flex-col gap-3 md:flex-row md:justify-between md:gap-4 ${isRTL ? 'text-right' : ''}`}>
         <div>
-          <h2 className="text-xl text-slate-950 sm:text-2xl">{t('machineCategorySection.title')}</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{t('machineCategorySection.description')}</p>
+          <h2 className="text-xl text-white sm:text-2xl">{t('machineCategorySection.title')}</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">{t('machineCategorySection.description')}</p>
         </div>
-        <div className="rounded-2xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900 md:max-w-xs">
+        <div className="rounded-2xl border border-brand-300/20 bg-brand-400/10 px-4 py-3 text-sm text-brand-200 md:max-w-xs">
           {t('machineCategorySection.note')}
         </div>
       </div>

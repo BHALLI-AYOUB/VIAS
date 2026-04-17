@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ChevronDown, Info } from 'lucide-react';
 import FormField from './FormField';
 import MachineCategorySection from './MachineCategorySection';
 import SummaryPanel from './SummaryPanel';
@@ -51,17 +51,17 @@ function Toast({ toast }) {
 
   const tone =
     toast.type === 'success'
-      ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-      : 'border-rose-200 bg-rose-50 text-rose-800';
+      ? 'border-emerald-400/25 bg-emerald-400/12 text-emerald-100'
+      : 'border-rose-400/25 bg-rose-400/12 text-rose-100';
   const Icon = toast.type === 'success' ? CheckCircle2 : AlertCircle;
 
   return (
-    <div className={`fixed bottom-4 left-4 right-4 z-50 rounded-2xl border px-4 py-3 shadow-lg sm:left-auto sm:right-5 sm:max-w-sm ${tone} ${isRTL ? 'text-right' : ''}`}>
+    <div className={`fixed bottom-4 left-4 right-4 z-50 rounded-[1.3rem] border px-4 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur sm:left-auto sm:right-5 sm:max-w-sm ${tone} ${isRTL ? 'text-right' : ''}`}>
       <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <Icon className="mt-0.5 h-5 w-5" />
         <div>
           <div className="font-semibold">{t(toast.titleKey)}</div>
-          <p className="mt-1 text-sm">{t(toast.messageKey)}</p>
+          <p className="mt-1 text-sm opacity-90">{t(toast.messageKey)}</p>
         </div>
       </div>
     </div>
@@ -204,12 +204,10 @@ function DeclarationForm() {
   };
 
   const handleToggleCategory = (category) => {
-    setActiveCategories((current) => {
-      return {
-        ...current,
-        [category]: !current[category],
-      };
-    });
+    setActiveCategories((current) => ({
+      ...current,
+      [category]: !current[category],
+    }));
   };
 
   const handleToggleMachine = (category, machineId) => {
@@ -324,114 +322,124 @@ function DeclarationForm() {
     showToast('success', 'form.toast.whatsappReadyTitle', 'form.toast.whatsappReadyMessage');
   };
 
+  const panelClass = 'site-panel rounded-[1.75rem] p-4 sm:p-6 lg:p-7';
+  const fieldClass = `w-full min-w-0 rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(38,42,49,0.94),rgba(26,28,34,0.98))] px-4 py-3 text-sm text-white placeholder:text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition focus:border-brand-300 focus:bg-[linear-gradient(180deg,rgba(46,49,56,0.96),rgba(29,32,38,0.98))] focus:ring-4 focus:ring-brand-400/12`;
+  const helperCardClass = 'mt-5 rounded-[1.4rem] border p-5';
+
   return (
-    <section id="declaration" className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_380px] xl:gap-6">
-      <div className="space-y-4 sm:space-y-5 md:space-y-6">
-        <div className={`panel overflow-hidden p-4 sm:p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
-          <div>
-            <div className="badge border-brand-200 bg-brand-50 text-brand-900">{t('form.publicBadge')}</div>
-            <h2 className="mt-4 text-3xl text-slate-950 sm:text-4xl">{t('form.title')}</h2>
-          </div>
+    <section id="declaration" className="grid gap-4 lg:gap-5">
+      <SummaryPanel
+        formData={formData}
+        summary={summary}
+        onSendEmail={handlePrepareSubmit}
+        onSendWhatsApp={handleWhatsAppSend}
+        onClearForm={handleClearForm}
+        isSending={isSending}
+      />
 
-          <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2">
-            <FormField label={t('form.fields.fullName')} htmlFor="fullName" required error={errors.fullName}>
-              <input
-                id="fullName"
-                value={formData.fullName}
-                onChange={(event) => handleFieldChange('fullName', event.target.value)}
-                className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-                placeholder={t('form.placeholders.fullName')}
-              />
-            </FormField>
+      <div className={`${panelClass} ${isRTL ? 'text-right' : ''}`}>
+        <div className="inline-flex items-center rounded-full border border-brand-300/25 bg-brand-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-200">
+          {t('form.publicBadge')}
+        </div>
+        <h2 className="mt-4 text-3xl text-white sm:text-4xl">{t('form.title')}</h2>
 
-            <FormField label={t('form.fields.phone')} htmlFor="phone" required error={errors.phone}>
-              <div className={`grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] ${isRTL ? 'text-right' : ''}`}>
-                <div className="relative">
-                  <select
-                    aria-label={t('form.fields.phone')}
-                    value={formData.phoneCountry}
-                    onChange={(event) => handleFieldChange('phoneCountry', event.target.value)}
-                    className={`field-shell appearance-none pr-10 ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`}
-                  >
-                    {countryCallingCodes.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div
-                    className={`pointer-events-none absolute inset-y-0 flex items-center text-sm font-semibold text-slate-700 ${
-                      isRTL ? 'left-3' : 'right-3'
-                    }`}
-                  >
-                    ▾
-                  </div>
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2">
+          <FormField tone="dark" label={t('form.fields.fullName')} htmlFor="fullName" required error={errors.fullName}>
+            <input
+              id="fullName"
+              value={formData.fullName}
+              onChange={(event) => handleFieldChange('fullName', event.target.value)}
+              className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+              placeholder={t('form.placeholders.fullName')}
+            />
+          </FormField>
+
+          <FormField tone="dark" label={t('form.fields.phone')} htmlFor="phone" required error={errors.phone}>
+            <div className={`grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] ${isRTL ? 'text-right' : ''}`}>
+              <div className="relative">
+                <select
+                  aria-label={t('form.fields.phone')}
+                  value={formData.phoneCountry}
+                  onChange={(event) => handleFieldChange('phoneCountry', event.target.value)}
+                  className={`${fieldClass} appearance-none pr-10 ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`}
+                >
+                  {countryCallingCodes.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.label}
+                    </option>
+                  ))}
+                </select>
+                <div className={`pointer-events-none absolute inset-y-0 flex items-center text-sm font-semibold text-slate-300 ${isRTL ? 'left-3' : 'right-3'}`}>
+                  <ChevronDown className="h-4 w-4" />
                 </div>
-                <input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(event) => handlePhoneChange(event.target.value)}
-                  inputMode="numeric"
-                  className={`field-shell min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}
-                  placeholder={t('form.placeholders.phone')}
-                />
               </div>
-            </FormField>
-
-            <FormField label={t('form.fields.company')} htmlFor="company">
               <input
-                id="company"
-                value={formData.company}
-                onChange={(event) => handleFieldChange('company', event.target.value)}
-                className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-                placeholder={t('form.placeholders.company')}
+                id="phone"
+                value={formData.phone}
+                onChange={(event) => handlePhoneChange(event.target.value)}
+                inputMode="numeric"
+                className={`${fieldClass} min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}
+                placeholder={t('form.placeholders.phone')}
               />
-            </FormField>
+            </div>
+          </FormField>
 
-            <FormField label={t('form.fields.email')} htmlFor="email">
-              <input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(event) => handleFieldChange('email', event.target.value)}
-                className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-                placeholder={t('form.placeholders.email')}
-              />
-            </FormField>
+          <FormField tone="dark" label={t('form.fields.company')} htmlFor="company">
+            <input
+              id="company"
+              value={formData.company}
+              onChange={(event) => handleFieldChange('company', event.target.value)}
+              className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+              placeholder={t('form.placeholders.company')}
+            />
+          </FormField>
 
-            <FormField label={t('form.fields.date')} htmlFor="date" required error={errors.date}>
-              <input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(event) => handleFieldChange('date', event.target.value)}
-                className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-              />
-            </FormField>
+          <FormField tone="dark" label={t('form.fields.email')} htmlFor="email">
+            <input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(event) => handleFieldChange('email', event.target.value)}
+              className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+              placeholder={t('form.placeholders.email')}
+            />
+          </FormField>
 
-            <FormField label={t('form.fields.time')} htmlFor="time">
-              <input
-                id="time"
-                type="time"
-                value={formData.time}
-                onChange={(event) => handleFieldChange('time', event.target.value)}
-                className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-              />
-            </FormField>
+          <FormField tone="dark" label={t('form.fields.date')} htmlFor="date" required error={errors.date}>
+            <input
+              id="date"
+              type="date"
+              value={formData.date}
+              onChange={(event) => handleFieldChange('date', event.target.value)}
+              className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+            />
+          </FormField>
 
-            <div className="min-w-0 md:col-span-2">
-              <FormField
-                label={t('form.fields.localisation')}
-                htmlFor="localisation"
-                required
-                description={t('form.descriptions.localisation')}
-                error={errors.localisation}
-              >
+          <FormField tone="dark" label={t('form.fields.time')} htmlFor="time">
+            <input
+              id="time"
+              type="time"
+              value={formData.time}
+              onChange={(event) => handleFieldChange('time', event.target.value)}
+              className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+            />
+          </FormField>
+
+          <div className="min-w-0 md:col-span-2">
+            <FormField
+              tone="dark"
+              label={t('form.fields.localisation')}
+              htmlFor="localisation"
+              required
+              description={t('form.descriptions.localisation')}
+              error={errors.localisation}
+            >
+              <div className="relative">
                 <select
                   id="localisation"
                   value={formData.localisation}
                   onChange={(event) => handleFieldChange('localisation', event.target.value)}
-                  className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
+                  className={`${fieldClass} appearance-none ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`}
                 >
                   <option value="">{t('form.placeholders.localisation')}</option>
                   {localisations.map((localisation) => (
@@ -441,92 +449,89 @@ function DeclarationForm() {
                   ))}
                   <option value="AUTRE">{t('form.fields.otherOption')}</option>
                 </select>
-              </FormField>
-
-              {formData.localisation === 'AUTRE' ? (
-                <div className="mt-4">
-                  <FormField
-                    label={t('form.fields.localisationOther')}
-                    htmlFor="localisationOther"
-                    required
-                    error={errors.localisationOther}
-                  >
-                    <input
-                      id="localisationOther"
-                      value={formData.localisationOther}
-                      onChange={(event) => handleFieldChange('localisationOther', event.target.value)}
-                      className={`field-shell ${isRTL ? 'text-right' : 'text-left'}`}
-                      placeholder={t('form.placeholders.localisationOther')}
-                    />
-                  </FormField>
+                <div className={`pointer-events-none absolute inset-y-0 flex items-center text-sm font-semibold text-slate-300 ${isRTL ? 'left-3' : 'right-3'}`}>
+                  <ChevronDown className="h-4 w-4" />
                 </div>
-              ) : null}
-            </div>
+              </div>
+            </FormField>
+
+            {formData.localisation === 'AUTRE' ? (
+              <div className="mt-4">
+                <FormField
+                  tone="dark"
+                  label={t('form.fields.localisationOther')}
+                  htmlFor="localisationOther"
+                  required
+                  error={errors.localisationOther}
+                >
+                  <input
+                    id="localisationOther"
+                    value={formData.localisationOther}
+                    onChange={(event) => handleFieldChange('localisationOther', event.target.value)}
+                    className={`${fieldClass} ${isRTL ? 'text-right' : 'text-left'}`}
+                    placeholder={t('form.placeholders.localisationOther')}
+                  />
+                </FormField>
+              </div>
+            ) : null}
           </div>
-        </div>
-
-        <div className="panel overflow-hidden p-4 sm:p-6 md:p-8">
-          <MachineCategorySection
-            categories={machineCategories}
-            machinesByCategory={machinesByCategory}
-            activeCategories={activeCategories}
-            selectedMachineIdsByCategory={selectedMachineIdsByCategory}
-            onToggleCategory={handleToggleCategory}
-            onToggleMachine={handleToggleMachine}
-          />
-        </div>
-
-        <div className={`panel overflow-hidden p-4 sm:p-6 md:p-8 ${isRTL ? 'text-right' : ''}`}>
-          <FormField label={t('form.fields.notes')} htmlFor="notes" description={t('form.descriptions.notes')}>
-            <textarea
-              id="notes"
-              rows="5"
-              value={formData.notes}
-              onChange={(event) => handleFieldChange('notes', event.target.value)}
-              className={`field-shell resize-y ${isRTL ? 'text-right' : 'text-left'}`}
-              placeholder={t('form.placeholders.notes')}
-            />
-          </FormField>
-
-          {errors.declaration ? (
-            <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{errors.declaration}</div>
-          ) : null}
-
-          {submitSuccess ? (
-            <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
-              <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-700" />
-                <div>
-                  <div className="font-semibold text-emerald-900">{t('form.successTitle')}</div>
-                  <p className="mt-1 text-sm text-emerald-800">
-                    {t('form.labels.channel')}: {t(submitSuccess.channelKey)}
-                    <br />
-                    {t('form.labels.reference')}: {submitSuccess.subject}
-                    <br />
-                    {t('form.labels.timestamp')}: {submitSuccess.sentAt}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Info className="mt-0.5 h-5 w-5 text-slate-600" />
-                <div className="text-sm leading-6 text-slate-600">{t('form.info')}</div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      <SummaryPanel
-        formData={formData}
-        summary={summary}
-        onSendEmail={handlePrepareSubmit}
-        onSendWhatsApp={handleWhatsAppSend}
-        onClearForm={handleClearForm}
-        isSending={isSending}
-      />
+      <div className={panelClass}>
+        <MachineCategorySection
+          categories={machineCategories}
+          machinesByCategory={machinesByCategory}
+          activeCategories={activeCategories}
+          selectedMachineIdsByCategory={selectedMachineIdsByCategory}
+          onToggleCategory={handleToggleCategory}
+          onToggleMachine={handleToggleMachine}
+        />
+      </div>
+
+      <div className={`${panelClass} ${isRTL ? 'text-right' : ''}`}>
+        <FormField tone="dark" label={t('form.fields.notes')} htmlFor="notes" description={t('form.descriptions.notes')}>
+          <textarea
+            id="notes"
+            rows="5"
+            value={formData.notes}
+            onChange={(event) => handleFieldChange('notes', event.target.value)}
+            className={`${fieldClass} resize-y ${isRTL ? 'text-right' : 'text-left'}`}
+            placeholder={t('form.placeholders.notes')}
+          />
+        </FormField>
+
+        {errors.declaration ? (
+          <div className="mt-4 rounded-[1.35rem] border border-rose-400/25 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+            {errors.declaration}
+          </div>
+        ) : null}
+
+        {submitSuccess ? (
+          <div className={`${helperCardClass} border-emerald-400/25 bg-emerald-400/10`}>
+            <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
+              <div>
+                <div className="font-semibold text-emerald-100">{t('form.successTitle')}</div>
+                <p className="mt-1 text-sm text-emerald-200/90">
+                  {t('form.labels.channel')}: {t(submitSuccess.channelKey)}
+                  <br />
+                  {t('form.labels.reference')}: {submitSuccess.subject}
+                  <br />
+                  {t('form.labels.timestamp')}: {submitSuccess.sentAt}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={`${helperCardClass} site-subpanel`}>
+            <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Info className="mt-0.5 h-5 w-5 text-brand-300" />
+              <div className="text-sm leading-6 text-slate-400">{t('form.info')}</div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <ConfirmationModal
         open={isModalOpen}
