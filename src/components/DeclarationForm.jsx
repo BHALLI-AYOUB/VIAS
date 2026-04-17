@@ -324,6 +324,7 @@ function DeclarationForm() {
 
   const panelClass = 'site-panel rounded-[1.75rem] p-4 sm:p-6 lg:p-7';
   const fieldClass = `w-full min-w-0 rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(38,42,49,0.94),rgba(26,28,34,0.98))] px-4 py-3 text-sm text-white placeholder:text-slate-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] transition focus:border-brand-300 focus:bg-[linear-gradient(180deg,rgba(46,49,56,0.96),rgba(29,32,38,0.98))] focus:ring-4 focus:ring-brand-400/12`;
+  const selectClass = `${fieldClass} site-select cursor-pointer appearance-none ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`;
   const helperCardClass = 'mt-5 rounded-[1.4rem] border p-5';
 
   return (
@@ -361,7 +362,7 @@ function DeclarationForm() {
                   aria-label={t('form.fields.phone')}
                   value={formData.phoneCountry}
                   onChange={(event) => handleFieldChange('phoneCountry', event.target.value)}
-                  className={`${fieldClass} appearance-none pr-10 ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`}
+                  className={selectClass}
                 >
                   {countryCallingCodes.map((country) => (
                     <option key={country.code} value={country.code}>
@@ -439,7 +440,7 @@ function DeclarationForm() {
                   id="localisation"
                   value={formData.localisation}
                   onChange={(event) => handleFieldChange('localisation', event.target.value)}
-                  className={`${fieldClass} appearance-none ${isRTL ? 'text-right pl-10 pr-4' : 'text-left pr-10'}`}
+                  className={selectClass}
                 >
                   <option value="">{t('form.placeholders.localisation')}</option>
                   {localisations.map((localisation) => (

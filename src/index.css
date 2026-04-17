@@ -199,6 +199,22 @@ html[dir='rtl'] h4 {
   z-index: 1;
 }
 
+.site-select {
+  color-scheme: dark;
+}
+
+.site-select option,
+.site-select optgroup {
+  color: #111827;
+  background-color: #f8fafc;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+html[dir='rtl'] .site-select option,
+html[dir='rtl'] .site-select optgroup {
+  font-family: 'Cairo', 'Space Grotesk', sans-serif;
+}
+
 @media print {
   body {
     background: white;
